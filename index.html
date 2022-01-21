@@ -1,0 +1,203 @@
+<!-- /* Created on 19 Jan, 2022
+Author: Rana Muhammad Rameez
+Place: Urban Unit */ -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />	
+	<title>Leaflet Test1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>	
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <div class="base-nav">
+        <button class="hidden" onclick="toggleContols()">Toggle Controls</button>
+        <a class="button" href="index.html"> Home </a>
+        <a class="button" href="html/leaflet_20_Jan_2022.html"> 20 Jan </a>
+        <a class="button" href="html/leaflet_21_Jan_2022.html"> 21 Jan </a>
+        <a class="button" href="html/sample_map.html"> Sample/ Test Map </a>
+    </div>
+    <div id="map" class="center" style="height: 400px;"></div>
+
+    <!-- ----------------------------Script for leaflet maps--------------------- -->
+<script>
+
+    var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+	var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibXJhbWVleiIsImEiOiJja3lsM25xcXczMjBxMnFvODgyeWJ1d2JuIn0.fYJTHaXf3mu0cRxoTCYvxA';
+	var cities = L.layerGroup();
+    
+	var mLahore = L.marker([31.562, 74.333]).bindPopup('Lahore, PK.').addTo(cities);
+
+	var grayscale = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+	var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+	var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+	var terrain = L.tileLayer(mbUrl, {id: 'mapbox/terrain-v2', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+    var streetView = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    });
+
+    // mapbox://mapbox.mapbox-terrain-v2
+	const map = L.map('map', {
+        zoomControl:true,
+        attributionControl:true,
+        doubleClickZoom:true,
+        scrollWheelZoom:true,
+
+        // center: [31.2, 74.2],
+		zoom: 10,
+		layers: [streets, cities],
+        scale:true,
+        fullscreenControl: true,
+
+
+        // fullscreenControl:{
+
+        // }
+        // fullscreenControlOptions: {
+        //     position: 'bottomright'
+        // }
+    }).setView([31.561368695556247, 74.332698163917], 13);
+    L.control.scale().addTo(map);
+
+    // map.addControl(new L.Control.Fullscreen());
+	var baseLayers = {
+        "<span style='color: gray'>Grayscale</span>": grayscale,
+		'Streets': streets,
+        'Satellite': satellite,
+        'Terrain': terrain,
+        'Buildings': streetView
+	};
+
+	var overlays = {
+		'Cities': cities
+	};
+
+	var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+    var currentLocation;
+
+	// var tiles = L.tileLayer(mbUrl, {
+	// 	maxZoom: 18,
+	// 	attribution: mbAttr,
+	// 	id: 'mapbox/streets-v11',
+	// 	tileSize: 512,
+	// 	zoomOffset: -1
+	// }).addTo(map);
+
+	var marker = L.marker([31.561368695556247, 74.332698163917]).addTo(map).bindPopup('<b>Fixed Point</b>').openPopup();
+
+
+    // L.control.fullscreen({
+    //     position: 'bottomright', // change the position of the button can be topleft, topright, bottomright or bottomleft, default topleft
+    //     title: 'Show me the fullscreen !', // change the title of the button, default Full Screen
+    //     titleCancel: 'Exit fullscreen mode', // change the title of the button when fullscreen is on, default Exit Full Screen
+    //     content: null, // change the content of the button, can be HTML, default null
+    //     forceSeparateButton: true, // force separate button to detach from zoom buttons, default false
+    //     forcePseudoFullscreen: true, // force use of pseudo full screen even if full screen API is available, default false
+    //     fullscreenElement: false // Dom element to render in full screen, false by default, fallback to map._container
+    // }).addTo(map);
+
+    /*<---------------------------- Event Handlers ----------------------->*/
+    //onMapClick Handler
+    function onMapClick(e) {
+        // popup
+        // 	.setLatLng(e.latlng)
+        // 	.setContent('You clicked the map at ' + e.latlng.toString())
+        // 	.openOn(map);
+        marker = L.marker(e.latlng, {
+            // icon:iconAddress,
+            title:'New Marker(Tooltip)',
+            draggable:true
+        }).addTo(map)
+        .bindPopup('<b>New Marked Location</b>').openPopup();
+
+        marker.on('move',function(){
+            console.log('Marker Moved');
+        });
+
+
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        
+        console.log('lat:' + lat + ' - lng: '+lng);
+        var polygon = L.polygon([
+            e.latlng,
+            [lat + 0.0007, lng - 0.0007],
+            [31.561368695556247, 74.332698163917],
+            [lat - 0.00010, lng + 0.00050]
+        ]).addTo(map).bindPopup('Estimated Area From Current Location');
+
+        // var baseLayers = {
+        //     "Mapbox": mapbox,
+        //     "OpenStreetMap": osm
+        // };
+
+        // var overlays = {
+        //     "Marker": marker,
+        //     "Roads": roadsLayer
+        // };
+
+        // L.control.layers(baseLayers, overlays).addTo(map);
+    } 
+
+    // onLocationFound: user Location Handler
+    function onLocationFound(e) {
+        var radius = e.accuracy;
+
+        currentLocation = e.latlng;
+
+        L.marker(e.latlng).addTo(map).bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+        // var circle = L.circle([51.508, -0.11], {
+        //     color: 'red',
+        //     fillColor: '#f03',
+        //     fillOpacity: 0.5,
+        //     radius: 500
+    	// }).addTo(map).bindPopup('I am a circle.');
+        
+        L.circle(e.latlng, {
+            color: 'blue',
+            fillColor: '#0f0',
+            fillOpacity: 0.3,
+            radius: radius
+        }).addTo(map).bindPopup('My Location');
+    }
+
+    //Map Error handler
+    function onLocationError(e) {
+        alert(e.message);
+    }   
+
+    var scale=true;
+    //Show Distance Scale
+    function toggleContols(){
+        if(!scale)
+        L.control.scale().addTo(map);
+        scale=true;
+    }
+
+	var popup = L.popup()
+		.setLatLng([51.513, -0.09])
+		.setContent('I am a standalone popup.')
+		.openOn(map);
+
+
+    map.on('click', onMapClick);
+    // map.on('dblclick', onMapClick); //Events ->> click, dblclick, preclick
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+    map.locate({watch: true, setView: true, maxZoom: 16});
+    // map.stopLocate()
+    // map.removeControl(?);
+    // map.addControl(?);
+    console.log("Map loaded");
+</script>
+
+
+
+</body>
+</html>

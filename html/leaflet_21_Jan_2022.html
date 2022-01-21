@@ -1,0 +1,316 @@
+<!-- /* 
+    Created on 19 Jan, 2022
+    Author: Rana Muhammad Rameez
+    Place: Urban Unit 
+    Updated on: 20 Jan, 2022
+                21 Jan, 2022
+*/ -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />	
+	<title>21 Jan-Leaflet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- leaflet js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <!-- For Fullscreen -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.css" />
+    <!-- For Distance Measuring -->
+    <!-- <link rel="stylesheet" href="../css/leaflet.measure.css"/> -->
+    <link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
+    <link rel="stylesheet" href="../css/main.css">
+
+
+    <!-- leaflet js -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>	
+    <!-- For Fullscreen -->
+	<script src="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.js"></script>
+    <!-- For Distance Measuring -->
+    <!-- <script src="../javascript/leaflet.measure.js"></script> -->
+    <script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
+</head>
+
+<body>
+<div class="base-nav">
+    <button class="hidden" onclick="toggleContols()">Toggle Controls</button>
+    <a class="button" href="../index.html"> Home </a>
+    <a class="button" href="leaflet_20_Jan_2022.html"> 20 Jan </a>
+    <a class="button" href="leaflet_21_Jan_2022.html"> 21 Jan </a>
+    <a class="button" href="sample_map.html"> Sample/ Test Map </a>
+</div>
+<div id="map" class="center" style="height: 440px;"></div>
+
+<!-- ----------------------------Script for leaflet maps--------------------- -->
+<script>
+    const shimlaLatLng = [31.562264550300096, 74.33584319594694];
+    var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+	var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibXJhbWVleiIsImEiOiJja3lsM25xcXczMjBxMnFvODgyeWJ1d2JuIn0.fYJTHaXf3mu0cRxoTCYvxA';
+	var cities = L.layerGroup();
+    
+	var mLahore = L.marker(shimlaLatLng).bindPopup('Lahore, PK.').addTo(cities);
+
+	var grayscale = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+	var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+	var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+	
+    // mapbox://mapbox.mapbox-terrain-v2
+    var terrain = L.tileLayer(mbUrl, {id: 'mapbox/terrain-v2', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+    var openStreet = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    });
+
+	const map = L.map('map', {
+        zoomControl:true,
+        attributionControl:false,
+        doubleClickZoom:true,
+        scrollWheelZoom:true,
+
+        center: shimlaLatLng,
+		zoom: 12,
+		layers: [openStreet, cities],
+        scale:true,
+
+        // measureControl: true,
+
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+            position: 'topleft',
+            title: 'Show me the fullscreen !', // change the title of the button, default Full Screen
+            titleCancel: 'Exit fullscreen mode', // change the title of the button when fullscreen is on, default Exit Full Screen
+        }
+    }).setView(shimlaLatLng, 14);
+    L.control.scale({metric:true, imperial:true}).addTo(map);
+    // map.addControl(new L.Control.Fullscreen());
+    // L.control.measure({
+    //     position: 'topleft',
+    //     keyboard: true,
+    //     lineColor: 'green',
+    //     lineWeight:3,
+    //     lineOpacity: 0.5,
+    //     textColor: 'green',
+
+    // //  distance formatter, output mile instead of km
+    //     // formatDistance: function (val) {
+    //     //     return Math.round(1000 * val / 1609.344) / 1000 + ' mile';
+    //     // }
+    // }).addTo(map);
+
+
+	var baseLayers = {
+        'Open Street': openStreet,
+        "<span style='color: gray'>Grayscale</span>": grayscale,
+		'Streets': streets,
+        'Satellite': satellite,
+        'Terrain': terrain
+	};
+
+	var overlays = {
+		'Cities': cities
+	};
+
+	var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+    var currentLocation;
+	var marker;
+    var distancePoints= new Array();
+    var polygon;
+
+    var circle = L.circle(shimlaLatLng, {
+            color: 'green',
+            fillColor: '#993',
+            fillOpacity: 0.5,
+            radius: 20
+    	}).addTo(map).bindPopup('Lahore');
+
+    // events are fired when entering or exiting fullscreen.
+    map.on('enterFullscreen', function(){
+        console.log('entered fullscreen');
+    });
+
+    map.on('exitFullscreen', function(){
+        console.log('exited fullscreen');
+    });
+
+    options = {
+        position: 'topleft',            // Position to show the control. Values: 'topright', 'topleft', 'bottomright', 'bottomleft'
+        unit: 'kilometres',             // Default unit the distances are displayed in. Values: 'kilometres', 'landmiles', 'nauticalmiles'
+        useSubunits: true,              // Use subunits (metres/feet) in tooltips if distances are less than 1 kilometre/landmile
+        clearMeasurementsOnStop: true,  // Clear all measurements when Measure Control is switched off
+        showBearings: true,            // Whether bearings are displayed within the tooltips
+        bearingTextIn: 'In',            // language dependend label for inbound bearings
+        bearingTextOut: 'Out',          // language dependend label for outbound bearings
+        tooltipTextFinish: 'Click to <b>finish line</b><br>',
+        tooltipTextDelete: 'Press SHIFT-key and click to <b>delete point</b>',
+        tooltipTextMove: 'Click and drag to <b>move point</b><br>',
+        tooltipTextResume: '<br>Press CTRL-key and click to <b>resume line</b>',
+        tooltipTextAdd: 'Press CTRL-key and click to <b>add point</b>',
+                                        // language dependend labels for point's tooltips
+        measureControlTitleOn: 'Turn on PolylineMeasure',   // Title for the Measure Control going to be switched on
+        measureControlTitleOff: 'Turn off PolylineMeasure', // Title for the Measure Control going to be switched off
+        measureControlLabel: '&#8614;', // Label of the Measure Control (Unicode symbols are possible)
+        measureControlClasses: [],      // Classes to apply to the Measure Control
+        showClearControl: true,        // Show a control to clear all the measurements
+        clearControlTitle: 'Clear Measurements', // Title text to show on the Clear Control
+        clearControlLabel: '&times',    // Label of the Clear Control (Unicode symbols are possible)
+        clearControlClasses: [],        // Classes to apply to Clear Control
+        showUnitControl: true,         // Show a control to change the units of measurements
+        unitControlUnits: ["kilometres", "landmiles", "nauticalmiles"],
+                                        // measurement units being cycled through by using the Unit Control
+        unitControlTitle: {             // Title texts to show on the Unit Control
+            text: 'Change Units',
+            kilometres: 'kilometres',
+            landmiles: 'land miles',
+            nauticalmiles: 'nautical miles'
+        },
+        unitControlLabel: {             // Unit symbols to show in the Unit Control and measurement labels
+            metres: 'm',
+            kilometres: 'km',
+            feet: 'ft',
+            landmiles: 'mi',
+            nauticalmiles: 'nm'
+        },
+        unitControlClasses: [],         // Classes to apply to the Unit Control
+        tempLine: {                     // Styling settings for the temporary dashed line
+            color: '#00f',              // Dashed line color
+            weight: 2                   // Dashed line weight
+        },          
+        fixedLine: {                    // Styling for the solid line
+            color: '#006',              // Solid line color
+            weight: 2                   // Solid line weight
+        },
+        startCircle: {                  // Style settings for circle marker indicating the starting point of the polyline
+            color: '#000',              // Color of the border of the circle
+            weight: 1,                  // Weight of the circle
+            fillColor: '#0f0',          // Fill color of the circle
+            fillOpacity: 1,             // Fill opacity of the circle
+            radius: 3                   // Radius of the circle
+        },
+        intermedCircle: {               // Style settings for all circle markers between startCircle and endCircle
+            color: '#000',              // Color of the border of the circle
+            weight: 1,                  // Weight of the circle
+            fillColor: '#ff0',          // Fill color of the circle
+            fillOpacity: 1,             // Fill opacity of the circle
+            radius: 3                   // Radius of the circle
+        },
+        currentCircle: {                // Style settings for circle marker indicating the latest point of the polyline during drawing a line
+            color: '#000',              // Color of the border of the circle
+            weight: 1,                  // Weight of the circle
+            fillColor: '#f0f',          // Fill color of the circle
+            fillOpacity: 1,             // Fill opacity of the circle
+            radius: 3                   // Radius of the circle
+        },
+        endCircle: {                    // Style settings for circle marker indicating the last point of the polyline
+            color: '#000',              // Color of the border of the circle
+            weight: 1,                  // Weight of the circle
+            fillColor: '#f00',          // Fill color of the circle
+            fillOpacity: 1,             // Fill opacity of the circle
+            radius: 3                   // Radius of the circle
+        },
+    };
+    // L.control.polylineMeasure(options).addTo(map);
+    let polylineMeasure = L.control.polylineMeasure(options);
+    polylineMeasure.addTo (map);
+
+    const line1coords = [
+        { lat: 22.156883186860703, lng: -158.95019531250003 },
+        { lat: 22.01436065310322, lng: -157.33520507812503 },
+        { lat: 21.391704731036587, lng: -156.17065429687503 },
+        { lat: 20.64306554672647, lng: -155.56640625000003 }
+    ];
+    const line2coords = [
+        { lat: 19.880391767822505, lng: -159.67529296875003 },
+        { lat: 17.90556881196468, lng: -156.39038085937503 }
+    ];
+    polylineMeasure.seed([line1coords, line2coords]);
+
+    map.on('polylinemeasure:toogle', e => { /* e.sttus */ });
+    map.on('polylinemeasure:start', currentLine => {});
+    map.on('polylinemeasure:resume', currentLine => {});
+    map.on('polylinemeasure:finish', currentLine => {});
+    map.on('polylinemeasure:change', currentLine => {});
+    map.on('polylinemeasure:clear', e => {});
+    map.on('polylinemeasure:add', e => { /* e.latlng */ });
+    map.on('polylinemeasure:insert', e => { /* e.latlng */ });
+    map.on('polylinemeasure:move', e => { /* e.latlng ; e.sourceTarget._latlng */ });
+    map.on('polylinemeasure:remove', e => { /* e.latlng ; e.sourceTarget._latlng */ });
+    /*<---------------------------- Event Handlers ----------------------->*/
+    //onMapClick Handler
+    function onMapClick(e) {
+        distancePoints.push(e.latlng);
+        marker = L.marker(e.latlng, {
+            // icon:iconAddress,
+            title:'Point' + distancePoints.length,
+            draggable:true
+        }).addTo(map)
+        .bindPopup('<b>Point ' + distancePoints.length+'</b>').openPopup();
+
+        marker.on('move',function(){
+            console.log('Marker Moved');
+        });
+
+
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        console.log('Point ' + distancePoints.length + ' (lat:' + lat + ', lng: '+lng+')');
+        // polygon = L.polygon(distancePoints).addTo(map).bindPopup('Selected Area');
+        // polygon = L.polygon([
+        //     e.latlng,
+        //     [lat + 0.0007, lng - 0.0007],
+        //     [31.561368695556247, 74.332698163917],
+        //     [lat - 0.00010, lng + 0.00050]
+        // ]).addTo(map).bindPopup('Estimated Area From Current Location');
+    } 
+
+    // onLocationFound: user Location Handler
+    function onLocationFound(e) {
+        var radius = e.accuracy;
+        currentLocation = e.latlng;
+        L.marker(e.latlng).addTo(map).bindPopup("You are within " + radius + " meters from this point").openPopup();
+        L.circle(e.latlng, {
+            color: 'blue',
+            fillColor: '#0f0',
+            fillOpacity: 0.3,
+            radius: radius
+        }).addTo(map).bindPopup('My Location');
+    }
+
+    //Map Error handler
+    function onLocationError(e) {
+        alert(e.message);
+    }   
+
+    var scale=true;
+    //Show Distance Scale
+    function toggleContols(){
+        if(!scale){
+            L.control.scale().addTo(map);
+            scale=true;
+        }else{
+            popup
+        	.setLatLng(currentLocation.latlng)
+        	.setContent('Scale aleady enabled!')
+        	.openOn(map);
+        }
+    }
+
+	var popup = L.popup()
+		.setLatLng(shimlaLatLng)
+		.setContent('Shimla Hill')
+		.openOn(map);
+
+    map.on('click', onMapClick);
+    // map.on('dblclick', onMapClick); //Events ->> click, dblclick, preclick
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+    map.locate({watch: true, setView: true, maxZoom: 16});
+    // map.stopLocate()
+    // map.removeControl(?);
+    // map.addControl(?);
+    console.log("Map loaded");
+</script>
+
+
+
+</body>
+</html>

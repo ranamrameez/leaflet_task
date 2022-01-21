@@ -1,0 +1,51 @@
+/* Created on 20 Jan, 2022
+Author: Rana Muhammad Rameez
+Place: Urban Unit */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body{
+    width: 100%;
+    height: 100%;
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+    height: 50%;
+    border: 3px solid green;
+    padding: 10px;
+}
+
+.base-nav{
+    width: fit-content;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    background-color: green;
+    opacity: 0.99;
+}
+
+.button{
+    border: 1px solid greenyellow;
+    margin-right: 20px;
+    margin-left: 20px;
+    padding: 5px 15px;
+    text-decoration: none;
+    color: white;
+    font-style: bold;
+    background-color: green;
+}
+
+.button:hover{
+    color: black;
+    background-color: yellow;
+}
+
+.hidden{
+  display: none;
+}
