@@ -15,7 +15,7 @@ html, body{
 
 .center {
     margin: auto;
-    width: 50%;
+    width: 95%;
     height: 50%;
     border: 3px solid green;
     padding: 10px;
@@ -48,4 +48,12 @@ html, body{
 
 .hidden{
   display: none;
+}
+
+.search-input {
+	font-family:Courier
+}
+.search-input,
+.leaflet-control-search {
+	max-width:400px;
 }

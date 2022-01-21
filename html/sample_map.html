@@ -53,9 +53,9 @@
         //  line opacity
         lineOpacity: 1,
         //  distance formatter
-        // formatDistance: function (val) {
-        //   return Math.round(1000 * val / 1609.344) / 1000 + 'mile';
-        // }
+        formatDistance: function (val) {
+          return Math.round(1000 * val / 1609.344) / 1000 + 'mile';
+        }
       }).addTo(map)
     </script>
   </body>

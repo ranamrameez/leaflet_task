@@ -3,7 +3,7 @@
     Author: Rana Muhammad Rameez
     Place: Urban Unit 
     Updated on: 20 Jan, 2022
-                21 Jan, 2022
+                21 Jan, 2022 at 3:30 PM
 */ -->
 <!DOCTYPE html>
 <html>
@@ -12,23 +12,29 @@
 	<title>21 Jan-Leaflet</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <!-- leaflet js -->
+<!-- **************************** All CSS Files **************************** -->
+    <!-- css of leaflet js -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
     <!-- For Fullscreen -->
 	<link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.css" />
+    <!-- for autonavi tile -->
+    <link rel="stylesheet" href="../css/leaflet.measure.css"/>
     <!-- For Distance Measuring -->
-    <!-- <link rel="stylesheet" href="../css/leaflet.measure.css"/> -->
     <link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
     <link rel="stylesheet" href="../css/main.css">
 
 
+<!-- ********************************************************** All JS Scripts **********************  -->
     <!-- leaflet js -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>	
     <!-- For Fullscreen -->
 	<script src="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.js"></script>
+    <!-- for autonavi tile -->
+    <script src="../javascript/leaflet.measure.js"></script> 
     <!-- For Distance Measuring -->
-    <!-- <script src="../javascript/leaflet.measure.js"></script> -->
     <script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
+    <!-- For https://github.com/leaflet-extras/leaflet-providers : This plugin includes almost all map poviders-->
+    <script src="..//javascript/leaflet-providers.js"></script>
 </head>
 
 <body>
@@ -37,6 +43,7 @@
     <a class="button" href="../index.html"> Home </a>
     <a class="button" href="leaflet_20_Jan_2022.html"> 20 Jan </a>
     <a class="button" href="leaflet_21_Jan_2022.html"> 21 Jan </a>
+    <a class="button" href="leaflet_21_Jan_v2_Topo.html"> 21 Jan (Open Topo) </a>
     <a class="button" href="sample_map.html"> Sample/ Test Map </a>
 </div>
 <div id="map" class="center" style="height: 440px;"></div>
@@ -55,13 +62,25 @@
 	var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
 	var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
 	
-    // mapbox://mapbox.mapbox-terrain-v2
+    var autonavi = L.tileLayer('http://webrd0{s}.is.autonavi.com/appmaptile?lang=en&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+        // maxZoom: 25,
+        // minZoom: 1,
+        subdomains: ['1', '2', '3', '4']
+    });
+
     var terrain = L.tileLayer(mbUrl, {id: 'mapbox/terrain-v2', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
     var openStreet = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     });
+    // add Stamen Watercolor to map.
+    var watercolor = L.tileLayer.provider('Stamen.Watercolor');//.addTo(map);
+    
+    var openTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    });
 
-	const map = L.map('map', {
+    const map = L.map('map', {
         zoomControl:true,
         attributionControl:false,
         doubleClickZoom:true,
@@ -103,7 +122,10 @@
         "<span style='color: gray'>Grayscale</span>": grayscale,
 		'Streets': streets,
         'Satellite': satellite,
-        'Terrain': terrain
+        'Terrain': terrain,
+        'Highways': autonavi,
+        'Watercolor': watercolor,
+        "<span style='color: yellow'>Open Topo</span>": openTopoMap
 	};
 
 	var overlays = {
