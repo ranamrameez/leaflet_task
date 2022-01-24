@@ -4,43 +4,68 @@
     Place: Urban Unit 
     Updated on: 20 Jan, 2022
                 21 Jan, 2022 at 3:39PM
-                24 Jan, 2022
+                24 Jan, 2022 at 12:24PM
 */ -->
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8" />	
-	<title>21 Jan_v2-Leaflet</title>
+    <meta charset="utf-8" />
+    <title>24 Jan-Leaflet</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-<!-- **************************** All CSS Files **************************** -->
+    <!-- **************************** All CSS Files **************************** -->
     <!-- Main css -->
     <link rel="stylesheet" href="../css/main.css">
     <!-- css of leaflet js -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
     <!-- For Fullscreen -->
-	<link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.css" />
     <!-- for autonavi tile -->
-    <link rel="stylesheet" href="../css/leaflet.measure.css"/>
+    <link rel="stylesheet" href="../css/leaflet.measure.css" />
     <!-- For Distance Measuring -->
     <link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
     <!-- leaflet search -->
     <link rel="stylesheet" href="../css/leaflet-search.css" />
+    <!-- Geo Search: https://smeijer.github.io/leaflet-geosearch/ Showing Error! -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css" />
 
+    <!-- ESRI Geocoding Control: http://esri.github.io/esri-leaflet/api-reference/controls/geosearch.html -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@3.1.1/dist/esri-leaflet-geocoder.css"
+        integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
+        crossorigin="">
 
-<!-- ********************************************************** All JS Scripts **********************  -->
+    <!-- ********************************************************** All JS Scripts **********************  -->
     <!-- leaflet js -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>	
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
     <!-- For Fullscreen -->
-	<script src="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.js"></script>
+    <script src="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.js"></script>
     <!-- for autonavi tile -->
-    <script src="../javascript/leaflet.measure.js"></script> 
+    <script src="../javascript/leaflet.measure.js"></script>
     <!-- For Distance Measuring -->
     <script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
     <!-- For https://github.com/leaflet-extras/leaflet-providers : This plugin includes almost all map poviders-->
     <script src="..//javascript/leaflet-providers.js"></script>
-    <!-- leaflet search --> 
+    <!-- leaflet search -->
     <script src="../javascript/leaflet-search.js"></script>
+
+    <!-- Make sure you put this AFtER leaflet.js, when using with leaflet -->
+    <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
+
+    <!-- ESRI : http://esri.github.io/esri-leaflet/download/ -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.4/dist/esri-leaflet.js"
+        integrity="sha512-oUArlxr7VpoY7f/dd3ZdUL7FGOvS79nXVVQhxlg6ij4Fhdc4QID43LUFRs7abwHNJ0EYWijiN5LP2ZRR2PY4hQ=="
+        crossorigin=""></script>
+
+    <!-- ESRI Geocoding Control: http://esri.github.io/esri-leaflet/api-reference/controls/geosearch.html -->
+    <script src="https://unpkg.com/esri-leaflet-geocoder@3.1.1/dist/esri-leaflet-geocoder.js"
+        integrity="sha512-enHceDibjfw6LYtgWU03hke20nVTm+X5CRi9ity06lGQNtC9GkBNl/6LoER6XzSudGiXy++avi1EbIg9Ip4L1w=="
+        crossorigin=""></script>
+
 </head>
 
 <body>
@@ -55,25 +80,24 @@
         <a class="button" href="sample_map.html"> Sample/ Test Map </a>
     </div>
     <div id="map" class="center"></div>
-
-<!-- ----------------------------Script for leaflet maps--------------------- -->
+    <!-- ----------------------------Script for leaflet maps--------------------- -->
     <script>
         const shimlaLatLng = [31.562264550300096, 74.33584319594694];
 
-    /* ************************Base Layers and OverlaysLayers *************/
+        /* ************************Base Layers and OverlaysLayers *************/
         var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
-                'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
         var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibXJhbWVleiIsImEiOiJja3lsM25xcXczMjBxMnFvODgyeWJ1d2JuIn0.fYJTHaXf3mu0cRxoTCYvxA';
         var cities = L.layerGroup();
-        var grayscale = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-        var streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-        var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});        
+        var grayscale = L.tileLayer(mbUrl, { id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
+        var streets = L.tileLayer(mbUrl, { id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
+        var satellite = L.tileLayer(mbUrl, { id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
         var autonavi = L.tileLayer('http://webrd0{s}.is.autonavi.com/appmaptile?lang=en&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
             // maxZoom: 25,
             // minZoom: 1,
             subdomains: ['1', '2', '3', '4']
         });
-        var terrain = L.tileLayer(mbUrl, {id: 'mapbox/terrain-v2', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+        var terrain = L.tileLayer(mbUrl, { id: 'mapbox/terrain-v2', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
         var openStreet = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         });
@@ -87,17 +111,17 @@
         /************ Overlay **************/
         var mLahore = L.marker(shimlaLatLng).bindPopup('Lahore, PK.').addTo(cities);
 
-    /********* Init Leaflet Map ***********/
+        /********* Init Leaflet Map ***********/
         const map = L.map('map', {
-            zoomControl:true,
-            attributionControl:false,
-            doubleClickZoom:true,
-            scrollWheelZoom:true,
+            zoomControl: true,
+            attributionControl: false,
+            doubleClickZoom: true,
+            scrollWheelZoom: true,
 
             center: shimlaLatLng,
             zoom: 12,
             layers: [openTopoMap, cities],
-            scale:true,
+            scale: true,
 
             // measureControl: true,
 
@@ -109,7 +133,31 @@
             }
         }).setView(shimlaLatLng, 14);
 
-    /* ************************Base Layers and OverlaysLayers *************/
+
+
+        // const search = new GeoSearch.GeoSearchControl({
+        //     provider: new GeoSearch.OpenStreetMapProvider(),
+        //     style: 'bar',
+        //     showMarker: true, // optional: true|false  - default true
+        //     showPopup: false, // optional: true|false  - default false
+        //     marker: {
+        //         // optional: L.Marker    - default L.Icon.Default
+        //         icon: new L.Icon.Default(),
+        //         draggable: false,
+        //     },
+        //     popupFormat: ({ query, result }) => result.label, // optional: function    - default returns result label,
+        //     resultFormat: ({ result }) => result.label, // optional: function    - default returns result label
+        //     maxMarkers: 1, // optional: number      - default 1
+        //     retainZoomLevel: false, // optional: true|false  - default false
+        //     animateZoom: true, // optional: true|false  - default true
+        //     autoClose: false, // optional: true|false  - default false
+        //     searchLabel: 'Enter address', // optional: string      - default 'Enter address'
+        //     keepResult: false, // optional: true|false  - default false
+        //     updateMap: true, // optional: true|false  - default true
+        // });
+        // map.addControl(search);
+
+        /* ************************Base Layers and OverlaysLayers *************/
         var baseLayers = {
             'Open Street': openStreet,
             "<span style='color: gray'>Grayscale</span>": grayscale,
@@ -125,36 +173,72 @@
             'Cities': cities
         };
 
-    /***************************All Variables************************************/
+        /***************************All Variables************************************/
         var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
         var currentLocation;
         var marker;
-        var distancePoints= new Array();
+        var distancePoints = new Array();
         var polygon;
 
         // Circle around Shimla Hill
         var circle = L.circle(shimlaLatLng, {
-                color: 'green',
-                fillColor: '#993',
-                fillOpacity: 0.5,
-                radius: 20
+            color: 'green',
+            fillColor: '#993',
+            fillOpacity: 0.5,
+            radius: 20
         }).addTo(map).bindPopup('Lahore');
 
 
 
 
-    /*************************All Conrtols *****************************/
-        L.control.scale({metric:true, imperial:true}).addTo(map);
-        
+        /*************************All Conrtols *****************************/
+        L.control.scale({ metric: true, imperial: true }).addTo(map);
+
+        var searchControl = L.esri.Geocoding.geosearch({
+            position: 'topleft',
+            placeholder: 'Enter an address or place e.g. 1 York St',
+            useMapBounds: false,
+            expanded:true,
+            zoomToResult: true,
+            collapseAfterResult:false,
+            title:'Search Here',
+            providers: [L.esri.Geocoding.arcgisOnlineProvider({
+                apikey: 'AAPKec28b75036ad4b6980aafb21ec5fca0fIc8OmL2BNc1IxV2PzXbHV_Lr0uN7LyIVIzvHNiOwsv3gARKs7nUH64X5ob0mYyaG', // replace with your api key - https://developers.arcgis.com
+                nearby: {
+                    lat: -33.8688,
+                    lng: 151.2093
+                }
+            })]
+        }).addTo(map);
+
+        var results = L.layerGroup().addTo(map);
+
+        searchControl.on('results', function (data) {
+            results.clearLayers();
+            console.log('Searh Result Info: ');
+            console.log('* The center of the results: (latlng=' + data.latlng+')');
+            console.log('* text: (text=' + data.text+')');
+
+            for (var i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+                console.log('** Location #'+i);
+
+                console.log('*** (latlng '+ data.results[i].latlng +
+                 ' text: ' + data.results[i].text+')');
+            }
+        });
+
         // Search Control Options
         L.control.search({
             url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
             propertyName: 'display_name',
-            jsonpParam: 'json_callback',		
-            propertyLoc: ['lat','lon'],
+            jsonpParam: 'json_callback',
+            propertyLoc: ['lat', 'lon'],
             autoCollapse: false,
-            autoType: false,
-            minLength: 2,
+            autoType: true,
+            minLength: 3,
+            style: 'bar',
+            position: 'bottomleft',
             // moveToLocation: function(latlng, title, map) {
             //     var url = L.Util.template('http://osm.org/?mlat={lat}&amp;mlon={lon}#map={zoom}/{lat}/{lon}', {
             //         lat: latlng.lat,
@@ -163,8 +247,7 @@
             //     });
             //     location.href = url;
             // }
-        })
-        .addTo(map);
+        }).addTo(map);
 
         // map.addControl(new L.Control.Fullscreen());
         // L.control.measure({
@@ -195,7 +278,7 @@
             tooltipTextMove: 'Click and drag to <b>move point</b><br>',
             tooltipTextResume: '<br>Press CTRL-key and click to <b>resume line</b>',
             tooltipTextAdd: 'Press CTRL-key and click to <b>add point</b>',
-                                            // language dependend labels for point's tooltips
+            // language dependend labels for point's tooltips
             measureControlTitleOn: 'Turn on PolylineMeasure',   // Title for the Measure Control going to be switched on
             measureControlTitleOff: 'Turn off PolylineMeasure', // Title for the Measure Control going to be switched off
             measureControlLabel: '&#8614;', // Label of the Measure Control (Unicode symbols are possible)
@@ -206,7 +289,7 @@
             clearControlClasses: [],        // Classes to apply to Clear Control
             showUnitControl: true,         // Show a control to change the units of measurements
             unitControlUnits: ["kilometres", "landmiles", "nauticalmiles"],
-                                            // measurement units being cycled through by using the Unit Control
+            // measurement units being cycled through by using the Unit Control
             unitControlTitle: {             // Title texts to show on the Unit Control
                 text: 'Change Units',
                 kilometres: 'kilometres',
@@ -224,7 +307,7 @@
             tempLine: {                     // Styling settings for the temporary dashed line
                 color: '#00f',              // Dashed line color
                 weight: 2                   // Dashed line weight
-            },          
+            },
             fixedLine: {                    // Styling for the solid line
                 color: '#006',              // Solid line color
                 weight: 2                   // Solid line weight
@@ -258,11 +341,11 @@
                 radius: 3                   // Radius of the circle
             },
         };
-        
+
         // L.control.polylineMeasure(mMeasurementOptions).addTo(map);
         // OR use the below on if we need polylineMeasure object for custom lines!
         let polylineMeasure = L.control.polylineMeasure(mMeasurementOptions);
-        polylineMeasure.addTo (map);
+        polylineMeasure.addTo(map);
 
         const line1coords = [
             { lat: 22.156883186860703, lng: -158.95019531250003 },
@@ -275,21 +358,21 @@
             { lat: 17.90556881196468, lng: -156.39038085937503 }
         ];
         polylineMeasure.seed([line1coords, line2coords]);
-    
-    /********************************* Event Handlers ************************>*/
+
+        /********************************* Event Handlers ************************>*/
 
         /**************** Measurement Events *****************/
         map.on('polylinemeasure:toogle', e => { /* e.sttus */ });
-        map.on('polylinemeasure:start', currentLine => {});
-        map.on('polylinemeasure:resume', currentLine => {});
-        map.on('polylinemeasure:finish', currentLine => {});
-        map.on('polylinemeasure:change', currentLine => {});
-        map.on('polylinemeasure:clear', e => {});
+        map.on('polylinemeasure:start', currentLine => { });
+        map.on('polylinemeasure:resume', currentLine => { });
+        map.on('polylinemeasure:finish', currentLine => { });
+        map.on('polylinemeasure:change', currentLine => { });
+        map.on('polylinemeasure:clear', e => { });
         map.on('polylinemeasure:add', e => { /* e.latlng */ });
         map.on('polylinemeasure:insert', e => { /* e.latlng */ });
         map.on('polylinemeasure:move', e => { /* e.latlng ; e.sourceTarget._latlng */ });
         map.on('polylinemeasure:remove', e => { /* e.latlng ; e.sourceTarget._latlng */ });
-        
+
         //onMapClick Handler
         function onMapClick(e) {
             distancePoints.push(e.latlng);
@@ -307,7 +390,7 @@
 
             var lat = e.latlng.lat;
             var lng = e.latlng.lng;
-            console.log('Point ' + distancePoints.length + ' (lat:' + lat + ', lng: '+lng+')');
+            console.log('Point ' + distancePoints.length + ' (lat:' + lat + ', lng: ' + lng + ')');
             // polygon = L.polygon(distancePoints).addTo(map).bindPopup('Selected Area');
             // polygon = L.polygon([
             //     e.latlng,
@@ -315,7 +398,7 @@
             //     [31.561368695556247, 74.332698163917],
             //     [lat - 0.00010, lng + 0.00050]
             // ]).addTo(map).bindPopup('Estimated Area From Current Location');
-        } 
+        }
 
         // onLocationFound: user Location Handler
         function onLocationFound(e) {
@@ -333,19 +416,19 @@
         //Map Error handler
         function onLocationError(e) {
             alert(e.message);
-        }   
+        }
 
-        var scale=true;
+        var scale = true;
         //Show Distance Scale
-        function toggleContols(){
-            if(!scale){
+        function toggleContols() {
+            if (!scale) {
                 L.control.scale().addTo(map);
-                scale=true;
-            }else{
+                scale = true;
+            } else {
                 popup
-                .setLatLng(currentLocation.latlng)
-                .setContent('Scale aleady enabled!')
-                .openOn(map);
+                    .setLatLng(currentLocation.latlng)
+                    .setContent('Scale aleady enabled!')
+                    .openOn(map);
             }
         }
 
@@ -355,23 +438,24 @@
             .openOn(map);
 
 
-    /********************************* Adding Event Handlers To Leaflet************************>*/
+        /********************************* Adding Event Handlers To Leaflet************************>*/
         // events are fired when entering or exiting fullscreen.
-        map.on('enterFullscreen', function(){
+        map.on('enterFullscreen', function () {
             console.log('entered fullscreen');
         });
-        map.on('exitFullscreen', function(){
+        map.on('exitFullscreen', function () {
             console.log('exited fullscreen');
         });
         map.on('click', onMapClick);
         // map.on('dblclick', onMapClick); //Events ->> click, dblclick, preclick
         map.on('locationfound', onLocationFound);
         map.on('locationerror', onLocationError);
-        map.locate({watch: true, setView: true, maxZoom: 16});
+        map.locate({ watch: true, setView: true, maxZoom: 16 });
         // map.stopLocate()
         // map.removeControl(?);
         // map.addControl(?);
         console.log("Map loaded");
     </script>
-    </body>
+</body>
+
 </html>
