@@ -66,6 +66,8 @@
         integrity="sha512-enHceDibjfw6LYtgWU03hke20nVTm+X5CRi9ity06lGQNtC9GkBNl/6LoER6XzSudGiXy++avi1EbIg9Ip4L1w=="
         crossorigin=""></script>
 
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 </head>
 
 <body>
@@ -77,7 +79,8 @@
         <a class="button" href="leaflet_21_Jan_2022.html"> 21 Jan </a>
         <a class="button" href="leaflet_21_Jan_v2_Topo.html"> 21 Jan (Open Topo) </a>
         <a class="button" href="leaflet_24_Jan_2022.html"> 24 Jan </a>
-        <a class="button" href="sample_map.html"> Sample/ Test Map </a>
+        <a class="button" href="leaflet_26_Jan_2022.html"> 26 Jan </a>
+        <!-- <a class="button" href="sample_map.html"> Sample/ Test Map </a> -->
     </div>
     <div id="map" class="center"></div>
     <!-- ----------------------------Script for leaflet maps--------------------- -->
@@ -132,7 +135,6 @@
                 titleCancel: 'Exit fullscreen mode', // change the title of the button when fullscreen is on, default Exit Full Screen
             }
         }).setView(shimlaLatLng, 14);
-
 
 
         // const search = new GeoSearch.GeoSearchControl({
@@ -198,10 +200,10 @@
             position: 'topleft',
             placeholder: 'Enter an address or place e.g. 1 York St',
             useMapBounds: false,
-            expanded:true,
+            expanded: true,
             zoomToResult: true,
-            collapseAfterResult:false,
-            title:'Search Here',
+            collapseAfterResult: false,
+            title: 'Search Here',
             providers: [L.esri.Geocoding.arcgisOnlineProvider({
                 apikey: 'AAPKec28b75036ad4b6980aafb21ec5fca0fIc8OmL2BNc1IxV2PzXbHV_Lr0uN7LyIVIzvHNiOwsv3gARKs7nUH64X5ob0mYyaG', // replace with your api key - https://developers.arcgis.com
                 nearby: {
@@ -216,15 +218,15 @@
         searchControl.on('results', function (data) {
             results.clearLayers();
             console.log('Searh Result Info: ');
-            console.log('* The center of the results: (latlng=' + data.latlng+')');
-            console.log('* text: (text=' + data.text+')');
+            console.log('* The center of the results: (latlng=' + data.latlng + ')');
+            console.log('* text: (text=' + data.text + ')');
 
             for (var i = data.results.length - 1; i >= 0; i--) {
                 results.addLayer(L.marker(data.results[i].latlng));
-                console.log('** Location #'+i);
+                console.log('** Location #' + i);
 
-                console.log('*** (latlng '+ data.results[i].latlng +
-                 ' text: ' + data.results[i].text+')');
+                console.log('*** (latlng ' + data.results[i].latlng +
+                    ' text: ' + data.results[i].text + ')');
             }
         });
 

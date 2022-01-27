@@ -1,0 +1,104 @@
+<!-- /* 
+    Created on 19 Jan, 2022
+    Author: Rana Muhammad Rameez
+    Place: Urban Unit 
+    Updated on: 20 Jan, 2022
+                21 Jan, 2022 at 3:39PM
+                24 Jan, 2022 at 12:24PM
+                26 Jan, 2022 at 03:34PM
+                27 Jan, 2022 at 11:34PM
+*/ -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>26 Jan-Leaflet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- **************************** All CSS Files **************************** -->
+    <!-- Main css -->
+    <link rel="stylesheet" href="../css/main.css">
+    <!-- css of leaflet js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <!-- For Fullscreen -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.css" />
+    <!-- for autonavi tile -->
+    <link rel="stylesheet" href="../css/leaflet.measure.css" />
+    <!-- For Distance Measuring -->
+    <link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
+    <!-- leaflet search -->
+    <link rel="stylesheet" href="../css/leaflet-search.css" />
+    <!-- Geo Search: https://smeijer.github.io/leaflet-geosearch/ Showing Error! -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css" />
+
+    <!-- ESRI Geocoding Control: http://esri.github.io/esri-leaflet/api-reference/controls/geosearch.html -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@3.1.1/dist/esri-leaflet-geocoder.css"
+        integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
+        crossorigin="">
+
+    <!-- ********************************************************** All JS Scripts **********************  -->
+    <!-- leaflet js -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    <!-- For Fullscreen -->
+    <script src="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.js"></script>
+    <!-- for autonavi tile -->
+    <script src="../javascript/leaflet.measure.js"></script>
+    <!-- For Distance Measuring -->
+    <script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
+    <!-- For https://github.com/leaflet-extras/leaflet-providers : This plugin includes almost all map poviders-->
+    <script src="..//javascript/leaflet-providers.js"></script>
+    <!-- leaflet search -->
+    <script src="../javascript/leaflet-search.js"></script>
+
+    <!-- Make sure you put this AFtER leaflet.js, when using with leaflet -->
+    <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
+
+    <!-- ESRI : http://esri.github.io/esri-leaflet/download/ -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.4/dist/esri-leaflet.js"
+        integrity="sha512-oUArlxr7VpoY7f/dd3ZdUL7FGOvS79nXVVQhxlg6ij4Fhdc4QID43LUFRs7abwHNJ0EYWijiN5LP2ZRR2PY4hQ=="
+        crossorigin=""></script>
+
+    <!-- ESRI Geocoding Control: http://esri.github.io/esri-leaflet/api-reference/controls/geosearch.html -->
+    <script src="https://unpkg.com/esri-leaflet-geocoder@3.1.1/dist/esri-leaflet-geocoder.js"
+        integrity="sha512-enHceDibjfw6LYtgWU03hke20nVTm+X5CRi9ity06lGQNtC9GkBNl/6LoER6XzSudGiXy++avi1EbIg9Ip4L1w=="
+        crossorigin=""></script>
+
+    <!-- https://github.com/perliedman/leaflet-routing-machine / https://www.liedman.net/leaflet-routing-machine/tutorials/basic-usage/ -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+
+<!-- Source: https://github.com/k4r573n/leaflet-control-osm-geocoder Demo: http://k4r573n.github.io/leaflet-control-osm-geocoder/ -->
+    <script src="https://rawgit.com/k4r573n/leaflet-control-osm-geocoder/master/Control.OSMGeocoder.js"></script>
+	<link rel="stylesheet" href="https://rawgit.com/k4r573n/leaflet-control-osm-geocoder/master/Control.OSMGeocoder.css" />
+
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div class="base-nav">
+        <button class="hidden" onclick="toggleContols()">Toggle Controls</button>
+        <a class="button" href="../index.html"> Home </a>
+        <a class="button" href="leaflet_20_Jan_2022.html"> 20 Jan </a>
+        <a class="button" href="leaflet_21_Jan_2022.html"> 21 Jan </a>
+        <a class="button" href="leaflet_21_Jan_v2_Topo.html"> 21 Jan (Open Topo) </a>
+        <a class="button" href="leaflet_24_Jan_2022.html"> 24 Jan </a>
+        <a class="button" href="leaflet_26_Jan_2022.html"> 26 Jan </a>
+        <!-- <a class="button" href="sample_map.html"> Sample/ Test Map </a> -->
+    </div>
+    <div class="wrapper">
+    <div id="map" class="center">
+    </div>
+    <div id="directions" class="over-the-map"></div>
+</div>
+    <!-- ----------------------------Script for leaflet maps--------------------- -->
+    <script src="../javascript/my_leaflet.js">
+    </script>
+</body>
+
+</html>
