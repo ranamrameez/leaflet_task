@@ -1,7 +1,8 @@
 /* Created on 27 Jan, 2022
     Author: Rana Muhammad Rameez
     Place: Urban Unit 
-    Updated on: 27 Jan, 2022
+    Updated on: 27 Jan, 2022: Created This separate js file for all map code
+                28 Jan, 2022: Added the latlng labeling + Updated Routing
 */
 
 // Shimla Hill Lahore's Location:
@@ -147,10 +148,47 @@ var circle = L.circle(shimlaLatLng, {
 /****************************************************************All Conrtols *****************************/
 L.control.scale({ metric: true, imperial: true }).addTo(map);
 
+// https://gitlab.com/leaflet/mouseCoordinate
+L.control.mouseCoordinate({utm:true,utmref:true}).addTo(map);
+
+
+// https://github.com/stefanocudini/leaflet-compass/blob/master/examples/simple.html
+var comp = new L.Control.Compass({autoActive: true, showDigit:true, position: 'topright'});
+map.addControl(comp);
+
+
+// <!-- https://github.com/MrMufflon/Leaflet.Coordinates -->
+L.control
+  .coordinates({
+    position: "bottomleft",
+    // position:"topright",
+    useDMS: true,
+    labelTemplateLat: "N {y}",
+    labelTemplateLng: "E {x}",
+    useLatLngOrder: true,
+  })
+  .addTo(map);
+
+  L.control.coordinates({
+    position:"bottomleft", //optional default "bootomright"
+    decimals:12, //optional default 4
+    decimalSeperator:".", //optional default "."
+    labelTemplateLat:"Latitude: {y}", //optional default "Lat: {y}"
+    labelTemplateLng:"Longitude: {x}", //optional default "Lng: {x}"
+    enableUserInput:true, //optional default true
+    useDMS:false, //optional default false
+    useLatLngOrder: true, //ordering of labels, default false-> lng-lat
+    markerType: L.marker, //optional default L.marker
+    markerProps: {}, //optional default {},
+    // labelFormatterLng : function(lng){return lng+" lng"}, //optional default none,
+    // labelFormatterLat : function(lat){return lat+" lat"}, //optional default none
+    customLabelFcn: function(latLonObj, opts) { "Geohash: " + encodeGeoHash(latLonObj.lat, latLonObj.lng)} //optional default none
+  }).addTo(map);
+
 // ESRI Geocoder
 var searchControl = L.esri.Geocoding.geosearch({
   position: "topleft",
-  placeholder: "Search with ESRI..",//"Enter an address or place e.g. 1 York St",
+  placeholder: "Search with ESRI..", //"Enter an address or place e.g. 1 York St",
   useMapBounds: false,
   expanded: true,
   zoomToResult: true,
@@ -196,8 +234,7 @@ var osmGeocoder = new L.Control.OSMGeocoder({
   collapsed: false /* Whether its collapsed or not */,
   position: "topleft" /* The position of the control */,
   text: "Locate" /* The text of the submit button */,
-  placeholder:
-    "Search With OSM" /* The text of the search input placeholder */,
+  placeholder: "Search With OSM" /* The text of the search input placeholder */,
   bounds: null /* a L.LatLngBounds object to limit the results to */,
   email:
     null /* an email string with a contact to provide to Nominatim. Useful if you are doing lots of queries */,
@@ -211,62 +248,73 @@ var osmGeocoder = new L.Control.OSMGeocoder({
 });
 map.addControl(osmGeocoder);
 
+
+/*
 // https://github.com/perliedman/leaflet-routing-machine / https://www.liedman.net/leaflet-routing-machine/tutorials/basic-usage/
+*/
 var ReversablePlan = L.Routing.Plan.extend({
-    createGeocoders: function() {
-        var container = L.Routing.Plan.prototype.createGeocoders.call(this),
-            reverseButton = createButton('↑↓', container);
-            L.DomEvent.on(reverseButton, 'click', function() {
-                var waypoints = this.getWaypoints(); this.setWaypoints(waypoints.reverse()); 
-           }, this);
-           
-            return container;
-    }
+  createGeocoders: function () {
+    var container = L.Routing.Plan.prototype.createGeocoders.call(this),
+      reverseButton = createButton("↑↓", container);
+    L.DomEvent.on(
+      reverseButton,
+      "click",
+      function () {
+        var waypoints = this.getWaypoints();
+        this.setWaypoints(waypoints.reverse());
+      },
+      this
+    );
+
+    return container;
+  },
 });
 
-var plan = new ReversablePlan([
+var plan = new ReversablePlan(
+  [
     L.latLng(31.59306597364911, 74.3682931861898),
-    L.latLng(31.554665794346963, 74.34850235232662)
- ], {
-    // geocoder: L.Control.Geocoder.nominatim(),
+    L.latLng(31.554665794346963, 74.34850235232662),
+  ],
+  {
     geocoder: L.Control.OSMGeocoder,
     routeWhileDragging: true,
-    
-  waypointNameFallback: function (latLng) {
-    function zeroPad(n) {
-      n = Math.round(n);
-      return n < 10 ? "0" + n : n;
-    }
-    function sexagesimal(p, pos, neg) {
-      var n = Math.abs(p),
-        degs = Math.floor(n),
-        mins = (n - degs) * 60,
-        secs = (mins - Math.floor(mins)) * 60,
-        frac = Math.round((secs - Math.floor(secs)) * 100);
-      return (
-        (n >= 0 ? pos : neg) +
-        degs +
-        "°" +
-        zeroPad(mins) +
-        "'" +
-        zeroPad(secs) +
-        "." +
-        zeroPad(frac) +
-        '"'
-      );
-    }
 
-    return (
-      sexagesimal(latLng.lat, "N", "S") +
-      " " +
-      sexagesimal(latLng.lng, "E", "W")
-    );
+    waypointNameFallback: function (latLng) {
+      function zeroPad(n) {
+        n = Math.round(n);
+        return n < 10 ? "0" + n : n;
+      }
+      function sexagesimal(p, pos, neg) {
+        var n = Math.abs(p),
+          degs = Math.floor(n),
+          mins = (n - degs) * 60,
+          secs = (mins - Math.floor(mins)) * 60,
+          frac = Math.round((secs - Math.floor(secs)) * 100);
+        return (
+          (n >= 0 ? pos : neg) +
+          degs +
+          "°" +
+          zeroPad(mins) +
+          "'" +
+          zeroPad(secs) +
+          "." +
+          zeroPad(frac) +
+          '"'
+        );
+      }
+
+      return (
+        sexagesimal(latLng.lat, "N", "S") +
+        " " +
+        sexagesimal(latLng.lng, "E", "W")
+      );
+    },
   }
-});
+);
 
 var control = L.Routing.control({
-    routeWhileDragging: true,
-    plan: plan
+  routeWhileDragging: true,
+  plan: plan,
 }).addTo(map);
 
 /*
@@ -315,32 +363,28 @@ geocoder: L.Control.OSMGeocoder
 }).addTo(map);
 */
 function createButton(label, container) {
-    var btn = L.DomUtil.create('button', '', container);
-    btn.setAttribute('type', 'button');
-    btn.innerHTML = label;
-    return btn;
+  var btn = L.DomUtil.create("button", "", container);
+  btn.setAttribute("type", "button");
+  btn.innerHTML = label;
+  return btn;
 }
 
+map.on("click", function (e) {
+  var container = L.DomUtil.create("div"),
+    startBtn = createButton("Start from this location", container),
+    destBtn = createButton("Go to this location", container);
 
-map.on('click', function(e) {
-    var container = L.DomUtil.create('div'),
-        startBtn = createButton('Start from this location', container),
-        destBtn = createButton('Go to this location', container);
+  L.popup().setContent(container).setLatLng(e.latlng).openOn(map);
 
-    L.popup()
-        .setContent(container)
-        .setLatLng(e.latlng)
-        .openOn(map);
+  L.DomEvent.on(startBtn, "click", function () {
+    control.spliceWaypoints(0, 1, e.latlng);
+    map.closePopup();
+  });
 
-        L.DomEvent.on(startBtn, 'click', function() {
-            control.spliceWaypoints(0, 1, e.latlng);
-            map.closePopup();
-        });
-        
-        L.DomEvent.on(destBtn, 'click', function() {
-            control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
-            map.closePopup();
-        });
+  L.DomEvent.on(destBtn, "click", function () {
+    control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+    map.closePopup();
+  });
 });
 
 /*
