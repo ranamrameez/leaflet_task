@@ -1,0 +1,338 @@
+<!-- /* Created on 19 Jan, 2022
+Author: Rana Muhammad Rameez
+Place: Urban Unit */ -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Leaflet-Labeling</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- <script src="https://unpkg.com/leaflet.label@0.3.0/leaflet.label.js"></script> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-label@0.2.1-0/dist/leaflet.label.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-label@0.2.1-0/dist/leaflet.label.min.css">
+
+    <style>
+        .na-labels {
+            background-color: yellow;
+            opacity: 0.8;
+            border-radius: 10px;
+        }
+
+        .na-labels-used {
+            background-color: red;
+            opacity: 0.4;
+            border: 1px solid black;
+            border-radius: 6px;
+        }
+
+        .na-labels-polygon {
+            background-color: greenyellow;
+            opacity: 0.4;
+            font-size: small;
+            border: 1px solid black;
+            border-radius: 20px;
+        }
+
+        html,
+        body,
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100vh !important;
+            width: 100% !important;
+        }
+    </style>
+
+    <!-- <link rel="stylesheet" href="./leaflet_task/css/main.css"> -->
+</head>
+
+<body>
+    <div id="map" class="center" style="height: 90vh;"></div>
+
+    <!-- ----------------------------Script for leaflet maps--------------------- -->
+    <script>
+        const Lahore = {
+            latlng: [31.561368695556247, 74.332698163917],
+            lat: 31.561368695556247,
+            lng: 74.332698163917,
+        }
+
+        const Jallo = {
+            latlng: [31.5810734903331, 74.50460815220141],
+            lat: 31.5810734903331,
+            lng: 74.50460815220141,
+        }
+        var mbAttr =
+            'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+        var mbUrl =
+            'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibXJhbWVleiIsImEiOiJja3lsM25xcXczMjBxMnFvODgyeWJ1d2JuIn0.fYJTHaXf3mu0cRxoTCYvxA';
+        var cities = L.layerGroup();
+
+        const mLahore = L.marker([31.562, 74.333]).bindPopup('Lahore, PK.').addTo(cities);
+
+        var grayscale = L.tileLayer(mbUrl, {
+            id: 'mapbox/light-v9',
+            tileSize: 512,
+            zoomOffset: -1,
+            attribution: mbAttr
+        });
+        var streets = L.tileLayer(mbUrl, {
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            attribution: mbAttr
+        });
+        var satellite = L.tileLayer(mbUrl, {
+            id: 'mapbox/satellite-v9',
+            tileSize: 512,
+            zoomOffset: -1,
+            attribution: mbAttr
+        });
+        var terrain = L.tileLayer(mbUrl, {
+            id: 'mapbox/terrain-v2',
+            tileSize: 512,
+            zoomOffset: -1,
+            attribution: mbAttr
+        });
+        var streetView = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+        // mapbox://mapbox.mapbox-terrain-v2
+        const map = L.map('map', {
+            zoomControl: true,
+            attributionControl: true,
+            doubleClickZoom: true,
+            scrollWheelZoom: true,
+
+            center: Lahore.latlng,
+            zoom: 10,
+            layers: [streets, cities],
+            scale: true,
+            fullscreenControl: true,
+
+
+            // fullscreenControl:{
+
+            // }
+            // fullscreenControlOptions: {
+            //     position: 'bottomright'
+            // }
+        }).setView(Jallo.latlng, 13);
+        L.control.scale().addTo(map);
+
+        const NaLabelsLayer = L.featureGroup().addTo(map);
+        const NaLayer = L.featureGroup().addTo(map);
+
+        // map.addControl(new L.Control.Fullscreen());
+        var baseLayers = {
+            "<span style='color: gray'>Grayscale</span>": grayscale,
+            'Streets': streets,
+            'Satellite': satellite,
+            'Terrain': terrain,
+            'Buildings': streetView
+        };
+
+        var overlays = {
+            'Cities': cities,
+            'NAs': NaLayer,
+            'NA Labels': NaLabelsLayer,
+        };
+
+        var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+        var currentLocation;
+
+        // var tiles = L.tileLayer(mbUrl, {
+        // 	maxZoom: 18,
+        // 	attribution: mbAttr,
+        // 	id: 'mapbox/streets-v11',
+        // 	tileSize: 512,
+        // 	zoomOffset: -1
+        // }).addTo(map);
+
+        // L.control.fullscreen({
+        //     position: 'bottomright', // change the position of the button can be topleft, topright, bottomright or bottomleft, default topleft
+        //     title: 'Show me the fullscreen !', // change the title of the button, default Full Screen
+        //     titleCancel: 'Exit fullscreen mode', // change the title of the button when fullscreen is on, default Exit Full Screen
+        //     content: null, // change the content of the button, can be HTML, default null
+        //     forceSeparateButton: true, // force separate button to detach from zoom buttons, default false
+        //     forcePseudoFullscreen: true, // force use of pseudo full screen even if full screen API is available, default false
+        //     fullscreenElement: false // Dom element to render in full screen, false by default, fallback to map._container
+        // }).addTo(map);
+
+        /** <---------------------------- Event Handlers -----------------------> */
+        //onMapClick Handler
+        function onMapClick(e) {
+            // popup
+            // 	.setLatLng(e.latlng)
+            // 	.setContent('You clicked the map at ' + e.latlng.toString())
+            // 	.openOn(map);
+            // marker = L.marker(e.latlng, {
+            //         // icon:iconAddress,
+            //         title: 'New Marker(Tooltip)',
+            //         draggable: true
+            //     }).addTo(map)
+            //     .bindPopup('<b>New Marked Location</b>').openPopup();
+
+            // marker.on('move', function() {
+            //     console.log('Marker Moved');
+            // });
+
+
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            console.log('lat:' + lat + ' - lng: ' + lng);
+            // var polygon = L.polygon([
+            //     e.latlng,
+            //     [lat + 0.0007, lng - 0.0007],
+            //     [31.561368695556247, 74.332698163917],
+            //     [lat - 0.00010, lng + 0.00050]
+            // ]).addTo(map).bindPopup('Estimated Area From Current Location');
+
+            // var baseLayers = {
+            //     "Mapbox": mapbox,
+            //     "OpenStreetMap": osm
+            // };
+
+            // var overlays = {
+            //     "Marker": marker,
+            //     "Roads": roadsLayer
+            // };
+
+            // L.control.layers(baseLayers, overlays).addTo(map);
+        }
+
+        // onLocationFound: user Location Handler
+        function onLocationFound(e) {
+            var radius = e.accuracy;
+            currentLocation = e.latlng;
+            // L.marker(e.latlng).addTo(map).bindPopup("You are within " + radius + " meters from this point").openPopup();
+        }
+
+        //Map Error handler
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        var scale = true;
+        //Show Distance Scale
+        function toggleContols() {
+            if (!scale)
+                L.control.scale().addTo(map);
+            scale = true;
+        }
+
+        // var popup = L.popup()
+        //     .setLatLng([51.513, -0.09])
+        //     .setContent('I am a standalone popup.')
+        //     .openOn(map);
+
+
+        map.on('click', onMapClick);
+        // map.on('dblclick', onMapClick); //Events ->> click, dblclick, preclick
+        // map.on('locationfound', onLocationFound);
+        // map.on('locationerror', onLocationError);
+        // map.locate({
+        //     watch: true,
+        //     setView: true,
+        //     maxZoom: 16
+        // });
+        // map.stopLocate()
+        // map.removeControl(?);
+        // map.addControl(?);
+        console.log("Map loaded");
+
+        $(document).ready(function() {
+            $.ajax({
+                type: "get",
+                url: "/test/services/labels.php",
+                dataType: "json",
+                success: function(response) {
+                    // console.log('%cindex.php line:183 response', 'color: #007acc;', response);
+                    response.forEach(element => {
+
+                        var marker = L.marker([element.y_lat, element.x_lng], {
+                            opacity: 0.01
+                        }); //opacity may be set to zero
+
+                        marker.bindTooltip(`${element.na_no} (${element.id})`, {
+                            permanent: true,
+                            className: "na-labels",
+                            offset: [0, 0]
+                        });
+                        marker.addTo(NaLabelsLayer);
+
+                        // var marker = L.marker([element.y_lat, element.x_lng])
+                        //     .addTo(NaLabelsLayer)
+                        //     .bindLabel(`${element.na_no}`)
+                        //     .openLabel();
+                    });
+                }
+            });
+            $.ajax({
+                type: "get",
+                url: "/test/services/nas.php",
+                dataType: "json",
+                success: function(response) {
+                    // console.log('%cindex.php line:183 response', 'color: #007acc;', response);
+                    response.forEach(element => {
+
+                        var marker = L.marker([element.label_y_lat, element.label_x_lng], {
+                            opacity: 0.01
+                        }); //opacity may be set to zero
+
+                        marker.bindTooltip(`${element.na_no} (${element.id}, ${element.distt_name})`, {
+                            permanent: true,
+                            className: "na-labels-used",
+                            offset: [10, 60]
+                        });
+                        marker.addTo(NaLayer);
+
+
+                        let wkt = element.wkt_text
+                        let Coords = [];
+                        wkt = wkt.replaceAll("MULTIPOLYGON", '')
+                        wkt = wkt.replaceAll("(", '')
+                        wkt = wkt.replaceAll(")", '')
+                        // wkt += "]"
+                        let wktArray = wkt.split(",")
+                        wktArray.forEach(function(elem) {
+                            let coords = elem.split(' ')
+                            let y = coords[1]
+                            coords[1] = coords[0]
+                            coords[0] = y
+                            Coords.push(coords)
+                        })
+
+                        // var polygon = L.polygon(Coords).addTo(NaLayer).bindPopup(`${element.na_no}`);
+
+                        var polygon = L.polygon(Coords)
+                        polygon.bindTooltip(`${element.na_no} (${element.id}, ${element.distt_name})`, {
+                            permanent: true,
+                            className: "na-labels-polygon",
+                            offset: [20, -60]
+                        }).bindPopup(`${element.na_no}`);
+                        polygon.addTo(NaLayer);
+                    });
+                }
+            });
+        });
+    </script>
+
+
+
+</body>
+
+</html>
